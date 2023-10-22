@@ -15,6 +15,10 @@ class UserRequestLog extends Model
         'token_id',
     ];
 
+    protected $casts = [
+        'request_params' => 'array',
+    ];
+
     public function user(){
         return $this->belongsTo(User::class);
     }
