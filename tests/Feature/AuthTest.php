@@ -41,6 +41,11 @@ it('can create user', function () {
 
 it('can\'t login with invalid credentials', function () {
 
+    User::factory()->create([
+        'email' => 'john.doe@example.com',
+        'password' => 'password',
+    ]);
+
     $userData = [
         'email' => 'john.notDoe@example.com',
         'password' => 'password',
@@ -53,6 +58,12 @@ it('can\'t login with invalid credentials', function () {
 });
 
 it('can login user', function () {
+
+    User::factory()->create([
+        'email' => 'john.doe@example.com',
+        'password' => 'password',
+    ]);
+
     $userData = [
         'email' => 'john.doe@example.com',
         'password' => 'password',
