@@ -18,14 +18,12 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $token = Auth::user()->createToken($request->userAgent(), ['*'], now()->addHours(3));
             return response()->json([
-                'message' => 'success',
-                'token' => $token->plainTextToken,
-                'expires_at' => $token->accessToken->expires_at,
+                $token,
             ]);
         }
         return response()->json([
             'message' => 'Invalid credentials',
-        ])->setStatusCode(401);
+        ], 401);
 
     }
 
@@ -41,7 +39,7 @@ class AuthController extends Controller
         User::create($credentials);
         return response()->json([
             'message' => 'User created successfully',
-        ])->setStatusCode(201);
+        ],201);
 
     }
 }
