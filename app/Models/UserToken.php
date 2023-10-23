@@ -15,6 +15,11 @@ class UserToken extends Model
         'expires_at',
 
     ];
+    protected $hidden = [
+        'user_id',
+        'created_at',
+        'updated_at',
+    ];
 
     public function user(): BelongsTo
     {

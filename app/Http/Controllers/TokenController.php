@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\UserToken;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class TokenController extends Controller
 {
@@ -14,15 +16,22 @@ class TokenController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
-        $this->authorize('create', UserToken::class);
-        $newToken = $request->user()->createToken(now()->addDays(30));
-        return response()->json([
-            'message' => 'Token created successfully',
-            'access_token' => 'Bearer '. $newToken->access_token,
-            'expires_at' => $newToken->expires_at,
-        ]);
+        try {
+            $this->authorize('create', UserToken::class);
+            $newToken = $request->user()->createCustomToken(now()->addDays(30));
+            return response()->json($newToken)->setStatusCode(201);
+        }catch (AuthorizationException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ])->setStatusCode(403);
+        }catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+            ])->setStatusCode(500);
+        }
+
     }
 
     /**
@@ -37,10 +46,18 @@ class TokenController extends Controller
             return response()->json([
                 'message' => 'Token deleted successfully',
             ]);
-        } catch (\Exception $e) {
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Token not found',
+            ])->setStatusCode(404);
+        } catch (AuthorizationException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-            ]);
+            ])->setStatusCode(403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+            ])->setStatusCode(500);
         }
 
     }

@@ -16,10 +16,14 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('token_id');
             $table->string('request_method');
-            $table->string('request_params');
+            $table->json('request_params');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
         });
     }
+
 
     /**
      * Reverse the migrations.

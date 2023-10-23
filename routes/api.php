@@ -25,14 +25,16 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
 });
 
-Route::middleware(['auth:token','request_logger'])->group(function () {
-    Route::get('/me', function (Request $request) {
-        return $request->user();
-    });
-
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('token')->group(function () {
         Route::post('/create', [TokenController::class, 'create']);
         Route::delete('/delete/{id}', [TokenController::class, 'destroy']);
+    });
+});
+
+Route::middleware(['auth:token','request_logger'])->group(function () {
+    Route::get('/me', function (Request $request) {
+        return $request->user();
     });
 });
 

@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email',
         'is_verified',
         'password',
+        'requests_count',
     ];
 
     /**
@@ -46,6 +47,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_verified' => 'boolean',
     ];
 
     public function user_tokens() : HasMany
@@ -58,7 +60,7 @@ class User extends Authenticatable
         return $this->hasMany(UserRequestLog::class);
     }
 
-    public function createToken($expiresAt = null)
+    public function createCustomToken($expiresAt = null)
     {
         $expiresAt ??= now()->addHours(2);
         $plainTextToken = sprintf(
